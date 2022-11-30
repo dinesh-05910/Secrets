@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 //const bcrypt = require("bcrypt");
 //const saltRounds = 10;
 const session = require('express-session');
+const MemoryStore = require('memorystore')(session)
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
@@ -23,7 +24,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(session({
     secret: 'Our little secret.',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: { maxAge: 86400000 },
+    store: new MemoryStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
+    }),
 }));
 
 app.use(passport.initialize());
@@ -179,5 +184,5 @@ if(port == null || port == "") {
 }
 
 app.listen(port,function(){
-    console.log("Server Started on port 3000.")
+    console.log("Server has started succesfully!")
 });
